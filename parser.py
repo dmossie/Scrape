@@ -79,9 +79,17 @@ def add_new(main_list, new_list):
 			main_list.append(i)
 
 	return main_list
+
+# Alert me about the new matches
+def alert_me(main_list, new_list):
+	for i in new_list:
+		if i not in main_list:
+			pprint(i)
+			print
+
 # User Input
 url = "http://www.usedvictoria.com/index.rss?category=motorcycles"
-keywords = ['2008']
+keywords = ['yamaha']
 price = 10000
 
 # Current List
@@ -103,10 +111,12 @@ while True:
 
 	# Check if new items have key words
 	new_matches = find_matches(new_items, keywords, price)
-	matches = add_new(matches,new_matches)
 
-	# Do something with the matches
-	print matches
+	# Do something with the new matches
+	alert_me(matches,new_matches)
+
+	# Add new matches to existing matches
+	matches = add_new(matches,new_matches)
 
 	# Save the new items and sleep
 	data = add_new(data, new_items)
