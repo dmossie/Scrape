@@ -1,4 +1,4 @@
-import requests, time
+import requests, time, re
 from xml.etree import ElementTree
 from pprint import pprint
 from datetime import datetime, timedelta
@@ -40,10 +40,10 @@ def parse_data(data):
 		pubdate = parsed_time - timedelta(hours=7)
 
 		# Add properties to the new item
-		new_item['title'] = title
+		new_item['title'] = title.lower()
 		new_item['price'] = int(price)
 		new_item['link'] = element[1].text
-		#new_item['description'] = element[2].text
+		new_item['description'] = parse_description(element[2].text)
 		new_item['pubdate'] = pubdate
 
 		# Add the new item to the list of all items
@@ -51,12 +51,22 @@ def parse_data(data):
 
 	return items
 
+# Make the description readable
+def parse_description(raw):
+	raw = re.sub('<[^<]+?>', '', raw)
+	raw = raw.replace('&nbsp','')
+	raw = raw.replace(';','')
+	raw = raw.replace('&gt','')
+	return raw.strip().lower()
+
 # Search the title for each item, if it has all keywords in it, return it
-def find_matches(items, keywords):
+def find_matches(items, keywords, price):
 	matches = []
 	for item in items:
+		if item['price'] > price:
+			continue
 		for keyword in keywords:
-			if keyword not in item['title']:
+			if keyword not in item['title'] and keyword not in item['description']:
 				break
 			if keyword == keywords[-1]:
 				matches.append(item)
@@ -72,6 +82,7 @@ def add_new(main_list, new_list):
 # User Input
 url = "http://www.usedvictoria.com/index.rss?category=motorcycles"
 keywords = ['2008']
+price = 10000
 
 # Current List
 data = []
@@ -91,7 +102,7 @@ while True:
 			new_items.append(i)
 
 	# Check if new items have key words
-	new_matches = find_matches(new_items, keywords)
+	new_matches = find_matches(new_items, keywords, price)
 	matches = add_new(matches,new_matches)
 
 	# Do something with the matches
