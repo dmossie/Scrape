@@ -1,2 +1,3 @@
-# UsedVicRSS
-An RSS parser for usedvictoria.com
+# UsedVicParser
+
+An RSS parser for Used Victoria
