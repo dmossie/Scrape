@@ -1,3 +1,3 @@
 # UsedVicParser
 
-An RSS parser for Used Victoria
+A parser for Used Victoria
